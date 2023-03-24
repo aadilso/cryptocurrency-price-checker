@@ -1,5 +1,6 @@
 import tkinter as tk  # Tkinter is the de facto way in Python to create Graphical User interfaces (GUIs) and is included in all standard Python Distributions
-from binance import *
+import logging
+from binance import BinanceClient
 
 logger = logging.getLogger()  # instance of a logger object/ initialising logger object
 logger.setLevel(logging.DEBUG)  # set min logging level to DEBUG meaning that debug and every level above will be logged
@@ -20,17 +21,11 @@ file_handler.setLevel(logging.DEBUG) # set min level to debug so even the debug 
 logger.addHandler(stream_handler) # add the stream handler to our logger
 logger.addHandler(file_handler) # add the file handler to our logger
 
-# configuring the different messages of the logger
-logger.debug('This is a debug message')
-logger.info('This is an info message')
-logger.warning('This is a warning message')
-logger.error('This is an error message')
-
-
 # ensuring only if the the program is called from main.py then the code inside will run (if we import the class to another class and run it the code inside the if statement will not run
 # https://stackoverflow.com/questions/419163/what-does-if-name-main-do for more in depth explanation
 if __name__ == '__main__':
-    binance_contracts = get_available_contracts()
+    binance = BinanceClient(True)
+    binance_contracts = binance.get_available_pairs()
     root = tk.Tk()  # creating a Tk object - this represent the main window of the application
     root.config(bg='gray12') # without this the empty sections will still be white
     # if you run at this point the program will not show anything hence the below code
@@ -57,6 +52,14 @@ if __name__ == '__main__':
             row_no = 0  # reset the row to 0
         else:  # if not just keep adding on the next row:
             row_no += 1  # each time we increase row no by 1 as we want each symbol on a new row
+
+        # get bid ask methods to get eth and btc bid ask prices
+    print(binance.get_bid_ask("BTCUSDT"))
+    print(binance.get_bid_ask("ETHUSDT"))
+    print(binance.prices)  # our prices dict from the binance futures class
+
+    # btc candle data on the 1 hour time frame (we set limit to 1000 in the methods code so it will give us the last 1000 candles in the 1h time frame) - note it gives oldest first to newest (first the 1000 candle then lastly the newest most recent candles)
+    print(binance.get_candle_data("BTCUSDT", "1h"))
 
     # text = tk.Text(root, width=80, height=15)
     # text.pack()
