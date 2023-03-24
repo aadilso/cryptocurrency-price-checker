@@ -1,5 +1,4 @@
 import tkinter as tk  # Tkinter is the de facto way in Python to create Graphical User interfaces (GUIs) and is included in all standard Python Distributions
-import logging  # logging library for debugging purposes
 from binance import * # importing write log method from binance class
 
 logger = logging.getLogger()  # instance of a logger object/ initialising logger object
@@ -27,15 +26,10 @@ logger.info('This is an info message')
 logger.warning('This is a warning message')
 logger.error('This is an error message')
 
-logger.info("this is logged in all cases")
 
-# running the writelog method from the binance class (we can do this as we imported the method)
-write_log()
 # ensuring only if the the program is called from main.py then the code inside will run (if we import the class to another class and run it the code inside the if statement will not run
 # https://stackoverflow.com/questions/419163/what-does-if-name-main-do for more in depth explanation
 if __name__ == '__main__':
-    logger.info("this is logged only if we excuete the main.py file")
-
     root = tk.Tk()  # creating a Tk object - this represent the main window of the application
     # if you run at this point the program will not show anything hence the below code
     root.mainloop()  # Mainloop in Python Tkinter is an infinite loop of the application window which runs forever (until we close) so that we can see the still screen.
