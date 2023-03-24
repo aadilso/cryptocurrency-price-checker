@@ -32,15 +32,25 @@ logger.error('This is an error message')
 if __name__ == '__main__':
     binance_contracts = get_available_contracts()
     root = tk.Tk()  # creating a Tk object - this represent the main window of the application
+    root.config(bg='gray12') # without this the empty sections will still be white
     # if you run at this point the program will not show anything hence the below code
 
     row_no = 0  # initialising to 0 means the first widget will be placed on the first row
     column_no = 0  # initialising to 0 means the first widget will be placed on the first column
     # we have to do this before the root.mainloop() as that code keeps infinitely showing the gui so of course the gui needs to be done before that code is called
+
+    my_font = ("Calibri", 10, "normal")  # defining a font using a tuple
+
     for contract in binance_contracts:
-        label_widget = tk.Label(root, text=contract)
+        label_widget = tk.Label(root, text=contract,
+                                borderwidth=1,
+                                relief=tk.SOLID, # there is also tk.GROOVE AND RIDGE so maybe try those if you want a different outline
+                                width=10, # also width = 10 ensures each column is of length 10 and some are not different lengths
+                                bg='gray12',  # background colour
+                                fg='SteelBlue1',  # foreground colour
+                                font=my_font)  # the font
         # label_widget.pack(side=tk.TOP) - using a pack layout is 1 of the 2 ways to display the data but because we have a lot of things to display it it not the most appropriate, grid is more appropriate
-        label_widget.grid(row=row_no, column=column_no)
+        label_widget.grid(row=row_no,column=column_no)
         # if we reach the 7th row (since 0 counts as 1st row):
         if row_no == 6:
             column_no += 1  # start adding the widgets to the next column
@@ -54,3 +64,5 @@ if __name__ == '__main__':
     #     text.insert(tk.END, contract + '\n' )
 
     root.mainloop()  # Mainloop in Python Tkinter is an infinite loop of the application window which runs forever (until we close) so that we can see the still screen.
+
+
