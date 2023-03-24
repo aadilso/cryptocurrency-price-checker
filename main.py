@@ -1,5 +1,5 @@
 import tkinter as tk  # Tkinter is the de facto way in Python to create Graphical User interfaces (GUIs) and is included in all standard Python Distributions
-from binance import * # importing write log method from binance class
+from binance import *
 
 logger = logging.getLogger()  # instance of a logger object/ initialising logger object
 logger.setLevel(logging.DEBUG)  # set min logging level to DEBUG meaning that debug and every level above will be logged
@@ -30,6 +30,27 @@ logger.error('This is an error message')
 # ensuring only if the the program is called from main.py then the code inside will run (if we import the class to another class and run it the code inside the if statement will not run
 # https://stackoverflow.com/questions/419163/what-does-if-name-main-do for more in depth explanation
 if __name__ == '__main__':
+    binance_contracts = get_available_contracts()
     root = tk.Tk()  # creating a Tk object - this represent the main window of the application
     # if you run at this point the program will not show anything hence the below code
+
+    row_no = 0  # initialising to 0 means the first widget will be placed on the first row
+    column_no = 0  # initialising to 0 means the first widget will be placed on the first column
+    # we have to do this before the root.mainloop() as that code keeps infinitely showing the gui so of course the gui needs to be done before that code is called
+    for contract in binance_contracts:
+        label_widget = tk.Label(root, text=contract)
+        # label_widget.pack(side=tk.TOP) - using a pack layout is 1 of the 2 ways to display the data but because we have a lot of things to display it it not the most appropriate, grid is more appropriate
+        label_widget.grid(row=row_no, column=column_no)
+        # if we reach the 7th row (since 0 counts as 1st row):
+        if row_no == 6:
+            column_no += 1  # start adding the widgets to the next column
+            row_no = 0  # reset the row to 0
+        else:  # if not just keep adding on the next row:
+            row_no += 1  # each time we increase row no by 1 as we want each symbol on a new row
+
+    # text = tk.Text(root, width=80, height=15)
+    # text.pack()
+    # for contract in binance_contracts:
+    #     text.insert(tk.END, contract + '\n' )
+
     root.mainloop()  # Mainloop in Python Tkinter is an infinite loop of the application window which runs forever (until we close) so that we can see the still screen.
