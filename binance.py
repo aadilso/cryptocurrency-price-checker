@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 
 class BinanceClient:
-    def __init__(self,testnet): # initialisation (basically a constructor) - testnet is a boolean indicating if were acting on the futures testnet or actual futures
+    def __init__(self, testnet):  # initialisation (basically a constructor) - testnet is a boolean indicating if were acting on the futures testnet or actual futures
         if testnet:
             self.base_url = "https://testnet.binancefuture.com"
         else:
@@ -26,7 +26,7 @@ class BinanceClient:
 # we will use a make request method which can be called by the other functions , in this way the code becomes cleaner as we dont have to repeat these lines in each of the other functions
 # method meaning the http methods GET or POST or DELETE, endpoint meaning the extra bit we need to add to the base url,
 # params meaning any parameters as sometimes a api call might require parameters
-    def make_request(self,method,endpoint,data):
+    def make_request(self, method, endpoint, data):
         if method == 'GET':
            response = requests.get(self.base_url + endpoint, params=data)
         else:
@@ -40,7 +40,7 @@ class BinanceClient:
             logger.error(f"{response.status_code} response error code -> Error while making {method} request to the endpoint {endpoint}: {response.json()}")
             return None
 
-# function to get a list of contracts/trading pairs from  binance futures
+# function to get a list of contracts/trading pairs from binance futures
     def get_available_pairs(self):
         # https://binance-docs.github.io/apidocs/futures/en/#exchange-information
         response_object = requests.get("https://fapi.binance.com/fapi/v1/exchangeInfo")  # get request for the exchange info
@@ -50,13 +50,13 @@ class BinanceClient:
         # the binance api returns the response in a json format
         # JSON represents objects as name/value pairs, just like a Python dictionary so we just specify the correct key to access the value of the key
 
-        contracts_list = []
+        pair_list = []
 
-        # for each dictionary ('contract' in the loop) in the list of dictionaries (response_object.json()['symbols']) add the "pair" to our contracts_list as the key "pair" contains the contract name
+        # for each dictionary ('contract' in the loop) in the list of dictionaries (response_object.json()['symbols']) add the "pair" to our pairs_list as the key "pair" contains the contract name
         for contract in response_object.json()['symbols']:
-            contracts_list.append(contract['pair'])
+            pair_list.append(contract['pair'])
 
-        return contracts_list  # return our list
+        return pair_list  # return our list
 
     def get_contracts(self):
 
@@ -104,7 +104,7 @@ class BinanceClient:
         data = dict()
         data['symbol'] = symbol  # for candle data requests the symbol is mandatory
         data['interval'] = interval  # interval meaning the timeframe , also mandatory
-        data['limit'] = 1000  # not mandatory but we will increase it from the default value of 500 to 1000
+        data['limit'] = 100  # not mandatory but we will decrease it from the default value of 500 to 100
 
         raw_candles = self.make_request("GET", "/fapi/v1/klines", data)
 
@@ -112,7 +112,7 @@ class BinanceClient:
 
         if raw_candles is not None:  # if response is successful
             for c in raw_candles:  # if you look at the API docs the request returns lists within a list with each list representing a candlestick so c is a list
-                # for each list/candlestick c we are appending the 1,2,3,4,5,6th elements to the list candles (we dont want all the other stuff eg. number of trades which is c[8])
+                # for each list/candlestick c we are appending the 1,2,3,4,5,6th elements to the list candles (we don't want all the other stuff eg. number of trades which is c[8])
                 candles.append([c[0], float(c[1]), float(c[2]), float(c[3]), float(c[4]), float(c[5])])  # we have to use float as some of the elements which are numbers are given as strings
 
         return candles  # in essence we are essentially returning what raw candles gave us just with only the candlestick data we are concerned with
@@ -120,7 +120,15 @@ class BinanceClient:
 
 b = BinanceClient("https://testnet.binancefuture.com")
 #pprint.pprint(b.get_contracts())
+
 #print(b.get_available_pairs())
-#print(b.get_bid_ask("BTCUSDT"))
-#print(b.get_candle_data("ETHUSDT","1h"))
+
+# print(b.get_bid_ask("BTCUSDT"))
+# print(b.get_bid_ask("ETHUSDT"))
+# print(b.prices)
+# print(b.get_bid_ask("BTCUSDT"))
+# print(b.prices)
+
+#print(b.get_candle_data("ETHUSDT","1w"))
+
 
